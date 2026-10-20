@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="OrderIngestion.Domain/OrderIngestion.Domain.csproj" />
+  <Project Path="OrderIngestion.Infrastructure/OrderIngestion.Infrastructure.csproj" />
+  <Project Path="OrderIngestion.Worker/OrderIngestion.Worker.csproj" />
+</Solution>
