@@ -79,7 +79,7 @@ In Grafana Cloud, open **Explore** and filter on the service name `order-ingesti
 
 ## Components
 
-The solution has three projects. The dependencies go in one direction only: `Worker` uses `Infrastructure` and `Domain`, and `Infrastructure` uses `Domain`.
+The solution has three application projects and one test project. The dependencies go in one direction only: `Worker` uses `Infrastructure` and `Domain`, and `Infrastructure` uses `Domain`.
 
 ### OrderIngestion.Domain
 
@@ -108,6 +108,19 @@ This project is the host. It reads the configuration, registers the services, an
 - **`.env.example`**: A template for the `.env` file with the OpenTelemetry settings for Grafana Cloud.
 - **`OrderIngestionWorker`**: The background service. It runs in a loop until the application stops. Each loop starts a trace, gets the orders from the API, gives them to the repository, logs the result, and waits for the polling interval.
 - **`OrderIngestionOptions`**: Holds the `OrderIngestion:PollingInterval` setting.
+
+### OrderIngestion.Infrastructure.Tests
+
+This project contains the xUnit tests for the `Infrastructure` project.
+
+- **`OrderRepositoryTests`**: Tests `OrderRepository` against an in-memory SQLite database. Each test gets a new database, and the setup applies the real migrations. Thus, the tests use the same schema and the same unique index as the worker. The tests cover an empty table, orders that are already stored, duplicates in one batch, more than one chunk, an empty batch, and the unique index.
+- **`OrderApiClientTests`**: Tests `OrderApiClient` with `StubHttpMessageHandler`, which returns a fixed response and records each request. The tests do not send real HTTP requests. They cover the request URL, the mapping of each field, `IngestedAt`, empty and `null` responses, error status codes, and cancellation.
+
+To run the tests, run this command from the root folder:
+
+```bash
+dotnet test
+```
 
 ## Design decisions
 
